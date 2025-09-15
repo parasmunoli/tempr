@@ -5,6 +5,9 @@ on:
     - cron: "30 23 * * *"   # Runs daily at 5:00 AM IST (23:30 UTC)
   workflow_dispatch:        # Allow manual trigger too
 
+permissions:
+  contents: write   # 👈 allow pushing commits
+
 jobs:
   auto-commits:
     runs-on: ubuntu-latest
@@ -12,6 +15,8 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Set Git identity
         run: |
