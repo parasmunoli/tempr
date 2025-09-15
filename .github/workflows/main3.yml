@@ -1,1 +1,35 @@
+name: Auto Commit Every 30s
 
+on:
+  schedule:
+    - cron: "30 23 * * *"   # Starts daily at 5:00 AM IST
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  auto-commits:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set Git identity
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Make 20 commits with 30s delay
+        run: |
+          for i in {1..20}
+          do
+            echo "Commit #$i at $(date)" >> commit_log.txt
+            git add commit_log.txt
+            git commit -m "Auto commit #$i at $(date)"
+            git push
+            sleep 30
+          done
